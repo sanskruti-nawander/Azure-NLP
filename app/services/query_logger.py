@@ -1,7 +1,18 @@
 import uuid
 import json
+from decimal import Decimal
+from datetime import date, datetime
 from sqlalchemy import text
 from app.config.db_config import engine
+
+
+def serialize_value(value):
+    if isinstance(value, Decimal):
+        return float(value)
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+    return value
+
 
 def log_query(question, sql, status, error=None):
     query_id = str(uuid.uuid4())
@@ -16,6 +27,12 @@ def log_query(question, sql, status, error=None):
     return query_id
 
 def log_result(query_id, result):
+    # Make result JSON serializable
+    safe_result = [
+        {k: serialize_value(v) for k, v in row.items()}
+        for row in result
+    ]
+
     with engine.begin() as conn:
         conn.execute(
             text("""
@@ -25,7 +42,8 @@ def log_result(query_id, result):
             {
                 "id": str(uuid.uuid4()),
                 "qid": query_id,
-                "res": json.dumps(result),
-                "cnt": len(result)
+                "res": json.dumps(safe_result),
+                "cnt": len(safe_result)
             }
         )
+

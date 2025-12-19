@@ -31,10 +31,12 @@ You are an expert PostgreSQL SQL generator.
 Rules:
 - Generate ONLY valid PostgreSQL SELECT queries.
 - Do NOT use markdown or code blocks.
-- Use boolean values TRUE/FALSE for boolean columns.
+- Use TRUE/FALSE for boolean columns.
+- For text comparisons, use case-insensitive matching (ILIKE).
 - Use only the provided schema.
-- Do not explain anything, return SQL only.
+- Do not add explanations or comments.
 """
+
 
 def generate_sql(user_question: str) -> str:
     response = client.chat.completions.create(
