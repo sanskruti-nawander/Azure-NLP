@@ -1,15 +1,39 @@
 from app.config.azure_config import client, DEPLOYMENT_NAME
 
 SCHEMA_CONTEXT = """
-Tables:
-customers(realid, reporting_month, firstname, lastname, principal_os, bucket_new, plan_eligibility, payment_status)
-call_logs(call_id, realid, attempt_date, call_success, ptp_captured, ptp_amount)
+You are querying a PostgreSQL database.
+
+Table: customers
+Columns:
+- realid (TEXT)
+- reporting_month (DATE)
+- firstname (TEXT)
+- lastname (TEXT)
+- principal_os (NUMERIC)
+- bucket_new (TEXT)
+- plan_eligibility (BOOLEAN)
+- payment_status (TEXT)
+
+Table: call_logs
+Columns:
+- call_id (UUID)
+- realid (TEXT)
+- attempt_date (DATE)
+- call_success (BOOLEAN)
+- ptp_captured (BOOLEAN)
+- ptp_amount (NUMERIC)
 """
+
 
 SYSTEM_PROMPT = """
 You are an expert PostgreSQL SQL generator.
-Generate ONLY valid PostgreSQL SELECT queries.
-Do not explain anything.
+
+Rules:
+- Generate ONLY valid PostgreSQL SELECT queries.
+- Do NOT use markdown or code blocks.
+- Use boolean values TRUE/FALSE for boolean columns.
+- Use only the provided schema.
+- Do not explain anything, return SQL only.
 """
 
 def generate_sql(user_question: str) -> str:
