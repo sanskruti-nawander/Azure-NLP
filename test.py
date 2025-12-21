@@ -1,5 +1,9 @@
-from app.config.db_config import engine
+from sqlalchemy import create_engine
+
+engine = create_engine(
+    "postgresql://postgres.caimrweszlegqgdlsbyq:Predixion%40123@aws-0-ap-south-1.pooler.supabase.com:5432/postgres",
+    connect_args={"sslmode": "require"}
+)
 
 with engine.connect() as conn:
-    result = conn.execute("SELECT 1")
-    print(result.fetchone())
+    print(conn.execute("select 1").fetchone())
